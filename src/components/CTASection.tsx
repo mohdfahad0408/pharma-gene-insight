@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { DNAHelix } from "./DNAHelix";
+import { Zap, Download, Lock, ClipboardList, BoltIcon } from "lucide-react";
 
 export const CTASection = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -10,10 +11,9 @@ export const CTASection = () => {
     <section className="py-32 relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 section-divider" />
 
-      {/* Ambient background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-primary/5 blur-[150px]" />
-        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-warm-teal/5 blur-[120px]" />
+        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-secondary/5 blur-[120px]" />
         <DNAHelix />
       </div>
 
@@ -28,9 +28,9 @@ export const CTASection = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={inView ? { scale: 1, opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center text-3xl mb-8 card-surface"
+            className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center mb-8 card-surface"
           >
-            🧬
+            <Zap className="w-8 h-8 text-primary" />
           </motion.div>
 
           <div className="subtitle-accent mb-4">ready to start?</div>
@@ -53,9 +53,7 @@ export const CTASection = () => {
               whileTap={{ scale: 0.97 }}
               className="group relative inline-flex items-center justify-center gap-2 px-10 py-5 rounded-2xl font-bold text-lg text-white overflow-hidden btn-warm"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+              <BoltIcon className="w-5 h-5" />
               Start Analysis
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
             </motion.a>
@@ -67,14 +65,11 @@ export const CTASection = () => {
               whileTap={{ scale: 0.97 }}
               className="inline-flex items-center gap-2 px-8 py-5 rounded-2xl font-semibold bg-card text-foreground border border-border hover:border-primary/40 hover:shadow-warm transition-all duration-300"
             >
-              <svg className="w-4 h-4 text-warm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
+              <Download className="w-4 h-4 text-warm-green" />
               Download Sample VCF
             </motion.a>
           </div>
 
-          {/* Trust signals */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
@@ -82,12 +77,12 @@ export const CTASection = () => {
             className="flex items-center justify-center gap-6 mt-10 flex-wrap"
           >
             {[
-              { icon: "🔒", text: "Client-side only" },
-              { icon: "📋", text: "CPIC Level A" },
-              { icon: "⚡", text: "Instant results" },
+              { Icon: Lock, text: "Client-side only" },
+              { Icon: ClipboardList, text: "CPIC Level A" },
+              { Icon: Zap, text: "Instant results" },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>{item.icon}</span>
+                <item.Icon className="w-3.5 h-3.5" />
                 <span>{item.text}</span>
               </div>
             ))}

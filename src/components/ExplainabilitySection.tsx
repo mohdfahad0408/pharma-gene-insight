@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTiltEffect } from "@/hooks/use-animations";
+import { Dna, Link2, TrendingUp, ClipboardList, Zap } from "lucide-react";
 
 const variants = [
   {
@@ -33,11 +34,11 @@ const variants = [
 ];
 
 const timeline = [
-  { step: "1", title: "Genomic Variant Identification", desc: "Parses VCF and identifies pharmacogenomically relevant variants using curated databases.", icon: "🧬" },
-  { step: "2", title: "Diplotype Assignment", desc: "Star allele nomenclature assigned using population-specific haplotype algorithms.", icon: "🔗" },
-  { step: "3", title: "Phenotype Prediction", desc: "Activity scores calculated to assign metabolizer status: PM, IM, NM, RM, or UM.", icon: "📈" },
-  { step: "4", title: "CPIC Guideline Lookup", desc: "Cross-reference with CPIC level A/B guidelines for drug-gene pair recommendations.", icon: "📋" },
-  { step: "5", title: "Risk Synthesis", desc: "Integrates variant data, phenotype, and clinical context to generate risk score and narrative.", icon: "⚡" },
+  { step: "1", title: "Genomic Variant Identification", desc: "Parses VCF and identifies pharmacogenomically relevant variants using curated databases.", Icon: Dna },
+  { step: "2", title: "Diplotype Assignment", desc: "Star allele nomenclature assigned using population-specific haplotype algorithms.", Icon: Link2 },
+  { step: "3", title: "Phenotype Prediction", desc: "Activity scores calculated to assign metabolizer status: PM, IM, NM, RM, or UM.", Icon: TrendingUp },
+  { step: "4", title: "CPIC Guideline Lookup", desc: "Cross-reference with CPIC level A/B guidelines for drug-gene pair recommendations.", Icon: ClipboardList },
+  { step: "5", title: "Risk Synthesis", desc: "Integrates variant data, phenotype, and clinical context to generate risk score and narrative.", Icon: Zap },
 ];
 
 const colorStyles = {
@@ -133,7 +134,6 @@ export const ExplainabilitySection = () => {
           </p>
         </motion.div>
 
-        {/* Variant cards */}
         <div className="grid md:grid-cols-3 gap-5 mb-24">
           {variants.map((v, i) => (
             <VariantCard key={v.gene} variant={v} index={i} />
@@ -152,7 +152,7 @@ export const ExplainabilitySection = () => {
             Analysis <span className="gradient-text">Pipeline</span>
           </h3>
           <div className="relative">
-            <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary/30 via-warm-teal/30 to-transparent" />
+            <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary/30 via-secondary/30 to-transparent" />
 
             <div className="space-y-5">
               {timeline.map((item, i) => (
@@ -163,8 +163,8 @@ export const ExplainabilitySection = () => {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="flex gap-5 items-start"
                 >
-                  <div className="relative flex-shrink-0 w-12 h-12 card-surface rounded-full flex items-center justify-center text-lg z-10 border-2 border-primary/20">
-                    {item.icon}
+                  <div className="relative flex-shrink-0 w-12 h-12 card-surface rounded-full flex items-center justify-center z-10 border-2 border-primary/20">
+                    <item.Icon className="w-5 h-5 text-primary" />
                   </div>
                   <div className="card-surface p-5 flex-1">
                     <div className="flex items-center gap-2 mb-1.5">
