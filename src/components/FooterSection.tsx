@@ -6,6 +6,8 @@ import { Github } from "lucide-react";
 const team = [
   { name: "Mohd. Fahad", role: "Developer", initials: "MF" },
   { name: "Shivendra Pratap Singh", role: "Developer", initials: "SP" },
+  { name: "Rashi Tiwari", role: "UI/UX", initials: "RT" },
+  { name: "Divyansh Kumar Pandey", role: "UI/UX", initials: "DP" },
 ];
 
 export const FooterSection = () => {
