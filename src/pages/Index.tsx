@@ -7,13 +7,22 @@ import { ResultsSection } from "@/components/ResultsSection";
 import { ExplainabilitySection } from "@/components/ExplainabilitySection";
 import { CTASection } from "@/components/CTASection";
 import { FooterSection } from "@/components/FooterSection";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { GeneticCompatibilityChecker } from "@/components/GeneticCompatibilityChecker";
 import { useScrollReveal } from "@/hooks/use-animations";
 import { AnalysisResult } from "@/lib/pharmacogenomics";
 
 const Index = () => {
   const [results, setResults] = useState<AnalysisResult | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useScrollReveal();
+
+  // Loading screen timer
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2200);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Re-run observer whenever results change (new elements appear in DOM)
   useEffect(() => {
@@ -42,22 +51,26 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main>
-        <HeroSection />
-        <AboutSection />
-        <UploadSection
-          onResults={setResults}
-          onReset={handleReset}
-          hasResults={results !== null}
-        />
-        {results && <ResultsSection results={results} onNewAnalysis={handleReset} />}
-        <ExplainabilitySection />
-        <CTASection />
-      </main>
-      <FooterSection />
-    </div>
+    <>
+      <LoadingScreen isLoading={isLoading} />
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main>
+          <HeroSection />
+          <AboutSection />
+          <UploadSection
+            onResults={setResults}
+            onReset={handleReset}
+            hasResults={results !== null}
+          />
+          {results && <ResultsSection results={results} onNewAnalysis={handleReset} />}
+          <GeneticCompatibilityChecker />
+          <ExplainabilitySection />
+          <CTASection />
+        </main>
+        <FooterSection />
+      </div>
+    </>
   );
 };
 
