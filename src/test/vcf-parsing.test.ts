@@ -59,3 +59,16 @@ describe("VCF GT-based filtering", () => {
     expect(result.variantsFound).toBe(1);
   });
 });
+
+describe("rsID → star allele fallback", () => {
+  it("infers star allele from rsID when STAR= tag is missing", () => {
+    const vcf = `##fileformat=VCFv4.2
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE
+chr22	42523943	rs3892097	C	T	60	PASS	GENE=CYP2D6;DRUG=Codeine;PHENOTYPE=PoorMetabolizer	GT:DP:GQ	0/1:58:99
+chr10	96702047	rs4244285	G	A	60	PASS	GENE=CYP2C19;DRUG=Clopidogrel	GT:DP:GQ	0/1:45:99`;
+    const result = parseVCF(vcf);
+    expect(result.success).toBe(true);
+    expect(result.variants[0].star_allele).toBe("*4");
+    expect(result.variants[1].star_allele).toBe("*2");
+  });
+});
