@@ -817,6 +817,18 @@ function isHomRef(gt: string): boolean {
   return false;
 }
 
+/**
+ * isHomozygousAlt – Returns true if genotype is homozygous-alternate (1/1, 1|1, 2/2, etc.).
+ * Used to determine when a single VCF line represents two copies of the same variant allele.
+ */
+function isHomozygousAlt(gt: string): boolean {
+  const normalized = gt.replace(/\|/g, "/");
+  const alleles = normalized.split("/");
+  // All alleles must be the same non-zero, non-missing value
+  if (alleles.length < 2) return false;
+  return alleles.every((a) => a !== "0" && a !== "." && a === alleles[0]);
+}
+
 /** parseInfoTags – Parses semicolon-delimited key=value pairs from VCF INFO field. */
 function parseInfoTags(info: string): Record<string, string> {
   const tags: Record<string, string> = {};
