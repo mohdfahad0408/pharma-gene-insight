@@ -712,7 +712,11 @@ function extractVariants(lines: string[]): DetectedVariant[] {
     // ── Step 3: Parse INFO tags and build variant ──
     const infoTags = parseInfoTags(info);
     const gene = (infoTags["GENE"] || infoTags["gene"] || "").toUpperCase();
-    const star = infoTags["STAR"] || infoTags["star"] || infoTags["ALLELE"] || "*1";
+
+    // Star allele: prefer explicit STAR= tag, then fall back to rsID→star mapping
+    const explicitStar = infoTags["STAR"] || infoTags["star"] || infoTags["ALLELE"] || "";
+    const rsidForLookup = rsFromInfo || vcfId || "";
+    const star = explicitStar || RSID_STAR_MAP[rsidForLookup] || "*1";
 
     // Prefer RS= from INFO over VCF ID column for clinical rsID accuracy
     const rsFromInfo = infoTags["RS"] || infoTags["rs"] || "";
