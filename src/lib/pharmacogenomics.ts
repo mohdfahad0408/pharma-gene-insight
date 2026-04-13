@@ -753,11 +753,6 @@ function extractVariants(lines: string[]): DetectedVariant[] {
     const explicitStar = infoTags["STAR"] || infoTags["star"] || infoTags["ALLELE"] || "";
     const star = explicitStar || RSID_STAR_MAP[rsid] || "*1";
 
-    // Prefer RS= from INFO over VCF ID column for clinical rsID accuracy
-    const rsFromInfo = infoTags["RS"] || infoTags["rs"] || "";
-    const rsid = rsFromInfo
-      ? (rsFromInfo.startsWith("rs") ? rsFromInfo : `rs${rsFromInfo}`)
-      : (vcfId || "unknown");
 
     if (gene) {
       variants.push({
