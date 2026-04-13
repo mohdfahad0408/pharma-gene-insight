@@ -630,7 +630,37 @@ const ACTIVITY_SCORES: Record<string, Record<string, number>> = {
   DPYD: { "*1": 1.0, "*2A": 0.0, "*13": 0.5 },
 };
 
-// ─── 1. VCF Parser ────────────────────────────────────────────
+// ─── rsID → Star Allele Fallback Map ──────────────────────────
+/**
+ * When VCF files lack explicit STAR= tags in INFO, we infer the star allele
+ * from the rsID. This covers the most clinically significant pharmacogenomic
+ * variants per CPIC guidelines.
+ */
+const RSID_STAR_MAP: Record<string, string> = {
+  // CYP2D6
+  "rs3892097": "*4",   // splice defect, no function
+  "rs5030655": "*6",   // frameshift, no function
+  "rs1065852": "*10",  // reduced function
+  "rs28371706": "*17", // reduced function
+  "rs28371725": "*41", // reduced function
+  // CYP2C19
+  "rs4244285": "*2",   // no function (splice defect)
+  "rs4986893": "*3",   // no function (stop codon)
+  "rs12248560": "*17", // increased function
+  // CYP2C9
+  "rs1799853": "*2",   // reduced function
+  "rs1057910": "*3",   // severely reduced function
+  // SLCO1B1
+  "rs4149056": "*5",   // decreased transporter function
+  // TPMT
+  "rs1142345": "*3A",  // no function
+  "rs1800460": "*3B",  // no function
+  "rs1800462": "*2",   // no function
+  // DPYD
+  "rs3918290": "*2A",  // no function (splice site)
+  "rs55886062": "*13", // reduced function
+};
+
 
 /**
  * parseVCF – Entry point for VCF file parsing.
@@ -713,10 +743,15 @@ function extractVariants(lines: string[]): DetectedVariant[] {
     const infoTags = parseInfoTags(info);
     const gene = (infoTags["GENE"] || infoTags["gene"] || "").toUpperCase();
 
+    // Prefer RS= from INFO over VCF ID column for clinical rsID accuracy
+    const rsFromInfo = infoTags["RS"] || infoTags["rs"] || "";
+    const rsid = rsFromInfo
+      ? (rsFromInfo.startsWith("rs") ? rsFromInfo : `rs${rsFromInfo}`)
+      : (vcfId || "unknown");
+
     // Star allele: prefer explicit STAR= tag, then fall back to rsID→star mapping
     const explicitStar = infoTags["STAR"] || infoTags["star"] || infoTags["ALLELE"] || "";
-    const rsidForLookup = rsFromInfo || vcfId || "";
-    const star = explicitStar || RSID_STAR_MAP[rsidForLookup] || "*1";
+    const star = explicitStar || RSID_STAR_MAP[rsid] || "*1";
 
     // Prefer RS= from INFO over VCF ID column for clinical rsID accuracy
     const rsFromInfo = infoTags["RS"] || infoTags["rs"] || "";
