@@ -25,10 +25,12 @@ describe("VCF GT-based filtering", () => {
     expect(result.variantsFound).toBe(0);
   });
 
-  it("includes variant when GT is 1/1 (hom-alt)", () => {
+  it("includes variant twice when GT is 1/1 (hom-alt) for correct diplotype", () => {
     const vcf = header + `chr22\t42523943\trs3892097\tC\tT\t60\tPASS\tGENE=CYP2D6;STAR=*4;RS=rs3892097\tGT:DP\t1/1:58`;
     const result = parseVCF(vcf);
-    expect(result.variantsFound).toBe(1);
+    expect(result.variantsFound).toBe(2);
+    expect(result.variants[0].star_allele).toBe("*4");
+    expect(result.variants[1].star_allele).toBe("*4");
   });
 
   it("handles phased genotypes (1|0)", () => {
