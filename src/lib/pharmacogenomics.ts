@@ -725,7 +725,7 @@ function extractVariants(lines: string[]): DetectedVariant[] {
     const info = cols[7] || "";
 
     // ── Step 2: Genotype (GT) filtering ──
-    // If FORMAT (col 8) and at least one SAMPLE (col 9) exist, extract GT
+    let isHomAlt = false;
     if (cols.length >= 10) {
       const formatField = cols[8] || "";
       const sampleField = cols[9] || "";
@@ -736,6 +736,9 @@ function extractVariants(lines: string[]): DetectedVariant[] {
       if (gt === null || isHomRef(gt)) {
         continue;
       }
+
+      // Detect homozygous-alt (1/1, 1|1) → need to emit two variant entries
+      isHomAlt = isHomozygousAlt(gt);
     }
     // If only 8 columns (no FORMAT/SAMPLE), include variant (legacy VCF support)
 
@@ -753,9 +756,8 @@ function extractVariants(lines: string[]): DetectedVariant[] {
     const explicitStar = infoTags["STAR"] || infoTags["star"] || infoTags["ALLELE"] || "";
     const star = explicitStar || RSID_STAR_MAP[rsid] || "*1";
 
-
     if (gene) {
-      variants.push({
+      const variant: DetectedVariant = {
         rsid,
         gene,
         star_allele: star,
@@ -763,7 +765,13 @@ function extractVariants(lines: string[]): DetectedVariant[] {
         position: isNaN(pos) ? undefined : pos,
         ref: ref || undefined,
         alt: alt || undefined,
-      });
+      };
+      variants.push(variant);
+
+      // For homozygous-alt (1/1), push a second copy so diplotype = star/star
+      if (isHomAlt) {
+        variants.push({ ...variant });
+      }
     }
   }
 
@@ -807,6 +815,18 @@ function isHomRef(gt: string): boolean {
   if (alleles.every((a) => a === "0")) return true;
 
   return false;
+}
+
+/**
+ * isHomozygousAlt – Returns true if genotype is homozygous-alternate (1/1, 1|1, 2/2, etc.).
+ * Used to determine when a single VCF line represents two copies of the same variant allele.
+ */
+function isHomozygousAlt(gt: string): boolean {
+  const normalized = gt.replace(/\|/g, "/");
+  const alleles = normalized.split("/");
+  // All alleles must be the same non-zero, non-missing value
+  if (alleles.length < 2) return false;
+  return alleles.every((a) => a !== "0" && a !== "." && a === alleles[0]);
 }
 
 /** parseInfoTags – Parses semicolon-delimited key=value pairs from VCF INFO field. */
